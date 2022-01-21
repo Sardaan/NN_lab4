@@ -1,0 +1,106 @@
+stages:
+load_original_data:
+cmd: python get-original-data.py
+deps:
+- get-original-data.py
+outs:
+- data/original
+load_skewed_data:
+cmd: python get-skewed-data.py
+deps:
+- get-skewed-data.py
+outs:
+- data/skewed
+combined_data:
+cmd:
+# actually create a new folder and copy all of the data into it
+- mkdir -f data/combined
+- cp data/original/* data/combined
+- cp data/skewed/* data/combined
+deps:
+- data/original
+- data/skewed
+outs:
+- data/combined
+model_training_on_original:
+cmd: python train-model.py
+deps:
+- data/original
+- train-model.py
+outs:
+- on-original-model-weights.pth
+model_training_on_combined:
+cmd: python train_model.py
+deps:
+- data/combined
+- train_model.py
+outs:
+- on-combined-model-weights.pth
+on_original_model_testing_on_combined:
+cmd: python eval-model.py
+deps:
+- on-original-model-weights.pth
+- eval-model.py
+- data/combined
+plots:
+- prc-original-on-combined.json:
+cache: false
+x: recall
+y: precision
+on_combined_model_testing_on_combined:
+cmd: python eval_model.py
+deps:
+- on-combined-model-weights.pth
+- eval_model.py
+- data/combined
+plots:
+- prc-combined-on-combined.json:
+cache: false
+x: recall
+y: precisioncombined_data:
+cmd:
+# actually create a new folder and copy all of the data into it
+- mkdir -f data/combined
+- cp data/original/* data/combined
+- cp data/skewed/* data/combined
+deps:
+- data/original
+- data/skewed
+outs:
+- data/combined
+model_training_on_original:
+cmd: python train-model.py
+deps:
+- data/original
+- train-model.py
+outs:
+- on-original-model-weights.pth
+model_training_on_combined:
+cmd: python train_model.py
+deps:
+- data/combined
+- train_model.py
+outs:
+- on-combined-model-weights.pth
+on_original_model_testing_on_combined:
+cmd: python eval-model.py
+deps:
+- on-original-model-weights.pth
+- eval-model.py
+- data/combined
+plots:
+- prc-original-on-combined.json:
+cache: false
+x: recall
+y: precision
+on_combined_model_testing_on_combined:
+cmd: python eval_model.py
+deps:
+- on-combined-model-weights.pth
+- eval_model.py
+- data/combined
+plots:
+- prc-combined-on-combined.json:
+cache: false
+x: recall
+y: precision
